@@ -30,7 +30,11 @@ public class MongoDataLoaderFactory implements IDataLoaderFactory, ISymmetricEng
             TransformWriter transformWriter, List<IDatabaseWriterFilter> filters,
             List<IDatabaseWriterErrorHandler> errorHandlers,
             List<? extends Conflict> conflictSettings, List<ResolvedData> resolvedData) {
-        return null;
+        MongoDatabaseWriter writer = new MongoDatabaseWriter();
+        writer.setConflictSettings(conflictSettings);
+        writer.setErrorHandlers(errorHandlers);
+        writer.setFilters(filters);
+        return writer;
     }
 
     @Override
