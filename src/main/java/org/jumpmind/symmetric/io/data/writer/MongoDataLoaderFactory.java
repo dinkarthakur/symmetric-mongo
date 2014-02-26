@@ -34,6 +34,7 @@ public class MongoDataLoaderFactory implements IDataLoaderFactory, ISymmetricEng
         writer.setConflictSettings(conflictSettings);
         writer.setErrorHandlers(errorHandlers);
         writer.setFilters(filters);
+        writer.setParameterService(engine.getParameterService());
         return writer;
     }
 
