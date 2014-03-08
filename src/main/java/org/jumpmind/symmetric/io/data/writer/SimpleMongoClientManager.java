@@ -9,6 +9,7 @@ import org.jumpmind.symmetric.service.IParameterService;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteConcern;
 
 public class SimpleMongoClientManager implements IMongoClientManager {
 
@@ -58,7 +59,10 @@ public class SimpleMongoClientManager implements IMongoClientManager {
     public DB getDB(String name) {
         if (currentDB == null || !currentDB.getName().equals(name)) {
             currentDB = get().getDB(name);
-
+            /**
+             * TODO make this a property
+             */
+            currentDB.setWriteConcern(WriteConcern.ACKNOWLEDGED);
             String username = null;
             String password = null;
             if (parameterService != null) {
