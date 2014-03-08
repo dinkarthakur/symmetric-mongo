@@ -3,9 +3,12 @@ apply plugin: 'eclipse'
 
 repositories {
     mavenCentral()
+    maven {
+       url "http://snapshots.repository.codehaus.org"
+    }
 }
 
 dependencies {
-    compile 'org.jumpmind.symmetric:symmetric-core:3.5.17'
-    runtime 'org.mongodb:mongo-java-driver:2.11.4'
+    runtime 'org.jumpmind.symmetric:symmetric-core:3.6.0-SNAPSHOT'
+    compile 'org.mongodb:mongo-java-driver:2.11.4'
 }
