@@ -16,6 +16,8 @@ public class MongoDataLoaderFactory extends DefaultDataLoaderFactory implements
 
     protected String typeName = "mongodb";
 
+    protected IDBObjectMapper objectMapper;
+
     public MongoDataLoaderFactory() {
         super();
     }
@@ -36,7 +38,7 @@ public class MongoDataLoaderFactory extends DefaultDataLoaderFactory implements
             TransformWriter transformWriter, List<IDatabaseWriterFilter> filters,
             List<IDatabaseWriterErrorHandler> errorHandlers,
             List<? extends Conflict> conflictSettings, List<ResolvedData> resolvedData) {
-        return new MongoDatabaseWriter(new SimpleMongoClientManager(parameterService, typeName),
+        return new MongoDatabaseWriter(objectMapper, new SimpleMongoClientManager(parameterService, typeName),
                 new DefaultTransformWriterConflictResolver(transformWriter),
                 buildDatabaseWriterSettings(filters, errorHandlers, conflictSettings, resolvedData));
     }
@@ -48,6 +50,10 @@ public class MongoDataLoaderFactory extends DefaultDataLoaderFactory implements
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public void setObjectMapper(IDBObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
 }
