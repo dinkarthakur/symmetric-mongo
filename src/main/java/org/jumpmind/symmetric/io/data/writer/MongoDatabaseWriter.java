@@ -69,40 +69,59 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
     }
 
     protected LoadStatus upsert(CsvData data) {
-        DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
-        DBCollection collection = db.getCollection(objectMapper.mapToCollection(this.targetTable));
-        String[] columnNames = sourceTable.getColumnNames();
-        Map<String, String> newData = data.toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
-        Map<String, String> oldData = data.toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
-        Map<String, String> pkData = data.toColumnNameValuePairs(
-                sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
-        DBObject query = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, true);
-        DBObject object = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, false);
-        WriteResult results = collection.update(query, object, true, false,
-                WriteConcern.ACKNOWLEDGED);
-        if (results.getN() == 1) {
-            return LoadStatus.SUCCESS;
-        } else {
-            throw new SymmetricException("Failed to write data: " + object.toString());
+        statistics.get(batch).startTimer(DataWriterStatisticConstants.DATABASEMILLIS);
+        try {
+            DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
+            DBCollection collection = db.getCollection(objectMapper
+                    .mapToCollection(this.targetTable));
+            String[] columnNames = sourceTable.getColumnNames();
+            Map<String, String> newData = data
+                    .toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
+            Map<String, String> oldData = data
+                    .toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
+            Map<String, String> pkData = data.toColumnNameValuePairs(
+                    sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
+            DBObject query = objectMapper
+                    .mapToDBObject(sourceTable, newData, oldData, pkData, true);
+            DBObject object = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData,
+                    false);
+            WriteResult results = collection.update(query, object, true, false,
+                    WriteConcern.ACKNOWLEDGED);
+            if (results.getN() == 1) {
+                return LoadStatus.SUCCESS;
+            } else {
+                throw new SymmetricException("Failed to write data: " + object.toString());
+            }
+        } finally {
+            statistics.get(batch).stopTimer(DataWriterStatisticConstants.DATABASEMILLIS);
         }
     }
 
     @Override
     protected LoadStatus delete(CsvData data, boolean useConflictDetection) {
-        DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
-        DBCollection collection = db.getCollection(objectMapper.mapToCollection(this.targetTable));
-        String[] columnNames = sourceTable.getColumnNames();
-        Map<String, String> newData = data.toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
-        Map<String, String> oldData = data.toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
-        Map<String, String> pkData = data.toColumnNameValuePairs(
-                sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
-        DBObject query = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, true);
-        WriteResult results = collection.remove(query, WriteConcern.ACKNOWLEDGED);
-        if (results.getN() != 1) {
-            log.warn("Attempted to remove a single object" + query.toString()
-                    + ".  Instead removed: " + results.getN());
+        statistics.get(batch).startTimer(DataWriterStatisticConstants.DATABASEMILLIS);
+        try {
+            DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
+            DBCollection collection = db.getCollection(objectMapper
+                    .mapToCollection(this.targetTable));
+            String[] columnNames = sourceTable.getColumnNames();
+            Map<String, String> newData = data
+                    .toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
+            Map<String, String> oldData = data
+                    .toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
+            Map<String, String> pkData = data.toColumnNameValuePairs(
+                    sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
+            DBObject query = objectMapper
+                    .mapToDBObject(sourceTable, newData, oldData, pkData, true);
+            WriteResult results = collection.remove(query, WriteConcern.ACKNOWLEDGED);
+            if (results.getN() != 1) {
+                log.warn("Attempted to remove a single object" + query.toString()
+                        + ".  Instead removed: " + results.getN());
+            }
+            return LoadStatus.SUCCESS;
+        } finally {
+            statistics.get(batch).stopTimer(DataWriterStatisticConstants.DATABASEMILLIS);
         }
-        return LoadStatus.SUCCESS;
 
     }
 
