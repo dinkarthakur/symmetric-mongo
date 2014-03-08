@@ -82,15 +82,6 @@ public class SimpleMongoClientManager implements IMongoClientManager {
         return currentDB;
     }
 
-    public String getDefaultDatabaseName() {
-        String defaultDatabaseName = "default";
-        if (parameterService != null) {
-            defaultDatabaseName = parameterService.getString(name
-                    + MongoConstants.DEFAULT_DATABASE_NAME, defaultDatabaseName);
-        }
-        return defaultDatabaseName;
-    }
-
     @Override
     public String getName() {
         return name;

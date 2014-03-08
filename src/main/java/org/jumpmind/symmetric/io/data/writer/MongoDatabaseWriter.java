@@ -1,11 +1,7 @@
 package org.jumpmind.symmetric.io.data.writer;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
 import java.util.Map;
 
-import org.jumpmind.db.model.Table;
 import org.jumpmind.symmetric.SymmetricException;
 import org.jumpmind.symmetric.io.data.CsvData;
 
@@ -73,15 +69,15 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
     }
 
     protected LoadStatus upsert(CsvData data) {
-        DB db = clientManager.getDB(getMongoDatabaseNameFrom(this.targetTable));
-        DBCollection collection = db.getCollection(getMongoCollectionNameFrom(this.targetTable));
+        DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
+        DBCollection collection = db.getCollection(objectMapper.mapToCollection(this.targetTable));
         String[] columnNames = sourceTable.getColumnNames();
         Map<String, String> newData = data.toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
         Map<String, String> oldData = data.toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
         Map<String, String> pkData = data.toColumnNameValuePairs(
                 sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
-        DBObject query = objectMapper.map(sourceTable, newData, oldData, pkData, true);
-        DBObject object = objectMapper.map(sourceTable, newData, oldData, pkData, false);
+        DBObject query = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, true);
+        DBObject object = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, false);
         WriteResult results = collection.update(query, object, true, false,
                 WriteConcern.ACKNOWLEDGED);
         if (results.getN() == 1) {
@@ -93,14 +89,14 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
 
     @Override
     protected LoadStatus delete(CsvData data, boolean useConflictDetection) {
-        DB db = clientManager.getDB(getMongoDatabaseNameFrom(this.targetTable));
-        DBCollection collection = db.getCollection(getMongoCollectionNameFrom(this.targetTable));
+        DB db = clientManager.getDB(objectMapper.mapToDatabase(this.targetTable));
+        DBCollection collection = db.getCollection(objectMapper.mapToCollection(this.targetTable));
         String[] columnNames = sourceTable.getColumnNames();
         Map<String, String> newData = data.toColumnNameValuePairs(columnNames, CsvData.ROW_DATA);
         Map<String, String> oldData = data.toColumnNameValuePairs(columnNames, CsvData.OLD_DATA);
         Map<String, String> pkData = data.toColumnNameValuePairs(
                 sourceTable.getPrimaryKeyColumnNames(), CsvData.PK_DATA);
-        DBObject query = objectMapper.map(sourceTable, newData, oldData, pkData, true);
+        DBObject query = objectMapper.mapToDBObject(sourceTable, newData, oldData, pkData, true);
         WriteResult results = collection.remove(query, WriteConcern.ACKNOWLEDGED);
         if (results.getN() != 1) {
             log.warn("Attempted to remove a single object" + query.toString()
@@ -118,29 +114,6 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
     @Override
     protected boolean sql(CsvData data) {
         return false;
-    }
-
-    protected String getMongoCollectionNameFrom(Table table) {
-        return table.getName();
-    }
-
-    protected String getMongoDatabaseNameFrom(Table table) {
-        String mongoDatabaseName = table.getCatalog();
-        if (isNotBlank(mongoDatabaseName) && isNotBlank(table.getSchema())) {
-            mongoDatabaseName += ".";
-        } else {
-            mongoDatabaseName = "";
-        }
-
-        if (isNotBlank(table.getSchema())) {
-            mongoDatabaseName += table.getSchema();
-        }
-
-        if (isBlank(mongoDatabaseName)) {
-            mongoDatabaseName = clientManager.getDefaultDatabaseName();
-        }
-
-        return mongoDatabaseName;
     }
 
 }

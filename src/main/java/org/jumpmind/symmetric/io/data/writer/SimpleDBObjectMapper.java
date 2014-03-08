@@ -1,5 +1,8 @@
 package org.jumpmind.symmetric.io.data.writer;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -10,13 +13,38 @@ import com.mongodb.DBObject;
 
 public class SimpleDBObjectMapper implements IDBObjectMapper {
 
-    public DBObject map(Table table, Map<String, String> newData, Map<String, String> oldData,
-            Map<String, String> pkData, boolean mapKeyOnly) {
+    String defaultDatabaseName = "default";
+
+    public DBObject mapToDBObject(Table table, Map<String, String> newData,
+            Map<String, String> oldData, Map<String, String> pkData, boolean mapKeyOnly) {
         if (mapKeyOnly) {
             return buildWithKey(table, newData, oldData, pkData);
         } else {
             return buildWithKeyAndData(table, newData, oldData, pkData);
         }
+    }
+
+    public String mapToCollection(Table table) {
+        return table.getName();
+    }
+
+    public String mapToDatabase(Table table) {
+        String mongoDatabaseName = table.getCatalog();
+        if (isNotBlank(mongoDatabaseName) && isNotBlank(table.getSchema())) {
+            mongoDatabaseName += ".";
+        } else {
+            mongoDatabaseName = "";
+        }
+
+        if (isNotBlank(table.getSchema())) {
+            mongoDatabaseName += table.getSchema();
+        }
+
+        if (isBlank(mongoDatabaseName)) {
+            mongoDatabaseName = defaultDatabaseName;
+        }
+
+        return mongoDatabaseName;
     }
 
     protected BasicDBObject buildWithKey(Table table, Map<String, String> newData,
@@ -58,6 +86,10 @@ public class SimpleDBObjectMapper implements IDBObjectMapper {
         }
 
         return object;
+    }
+
+    public void setDefaultDatabaseName(String defaultDatabaseName) {
+        this.defaultDatabaseName = defaultDatabaseName;
     }
 
 }

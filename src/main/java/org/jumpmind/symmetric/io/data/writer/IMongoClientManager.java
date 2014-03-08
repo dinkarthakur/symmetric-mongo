@@ -11,5 +11,4 @@ public interface IMongoClientManager {
     
     public String getName();
     
-    public String getDefaultDatabaseName();
 }

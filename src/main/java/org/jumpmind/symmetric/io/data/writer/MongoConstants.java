@@ -11,6 +11,5 @@ final public class MongoConstants {
     public static final String USERNAME = ".username";
     
     public static final String PASSWORD = ".password";
-    
-    public static final String DEFAULT_DATABASE_NAME = ".default.database.name";
+
 }

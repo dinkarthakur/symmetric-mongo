@@ -8,7 +8,11 @@ import com.mongodb.DBObject;
 
 public interface IDBObjectMapper {
 
-    public DBObject map(Table table, Map<String, String> newData, Map<String, String> oldData,
+    public DBObject mapToDBObject(Table table, Map<String, String> newData, Map<String, String> oldData,
             Map<String, String> pkData, boolean mapKeyOnly);
+
+    public String mapToCollection(Table table);
+
+    public String mapToDatabase(Table table);
 
 }
