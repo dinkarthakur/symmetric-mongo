@@ -64,13 +64,17 @@ public class SimpleMongoClientManager implements IMongoClientManager {
              */
             currentDB.setWriteConcern(WriteConcern.ACKNOWLEDGED);
             String username = null;
-            String password = null;
+            char[] password = null;
             if (parameterService != null) {
                 username = parameterService.getString(name + MongoConstants.USERNAME, username);
-                password = parameterService.getString(name + MongoConstants.PASSWORD, password);
+                String passwordString = parameterService.getString(name + MongoConstants.PASSWORD,
+                        null);
+                if (passwordString != null) {
+                    password = passwordString.toCharArray();
+                }
             }
 
-            if (!currentDB.authenticate(username, password.toCharArray())) {
+            if (username != null && !currentDB.authenticate(username, password)) {
                 throw new SymmetricException("Failed to authenticate with the mongo database: "
                         + name);
             }

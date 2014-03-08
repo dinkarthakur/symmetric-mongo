@@ -99,10 +99,10 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
     protected BasicDBObject buildWithKey(CsvData data, Map<String, String> newData) {
         Map<String, String> oldData = data.toColumnNameValuePairs(sourceTable.getColumnNames(),
                 CsvData.OLD_DATA);
-        if (oldData == null) {
+        if (oldData == null || oldData.size() == 0) {
             oldData = data.toColumnNameValuePairs(sourceTable.getColumnNames(), CsvData.PK_DATA);
         }
-        if (oldData == null) {
+        if (oldData == null || oldData.size() == 0) {
             oldData = newData;
         }
 
@@ -157,6 +157,8 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
         String mongoDatabaseName = table.getCatalog();
         if (isNotBlank(mongoDatabaseName) && isNotBlank(table.getSchema())) {
             mongoDatabaseName += ".";
+        } else {
+            mongoDatabaseName = "";
         }
 
         if (isNotBlank(table.getSchema())) {
