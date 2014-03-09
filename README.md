@@ -34,7 +34,6 @@ mongodb.username=xxxx
 mongodb.password=xxxx
 mongodb.host=xxxx
 mongodb.port=xxxx
-
 ```
 
 ### How Relational Data is Mapped to mongoDB
