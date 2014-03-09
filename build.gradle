@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    runtime 'org.jumpmind.symmetric:symmetric-core:3.6.0-SNAPSHOT'
+    compile 'org.jumpmind.symmetric:symmetric-core:3.6.0-SNAPSHOT'
     compile 'org.mongodb:mongo-java-driver:2.11.4'
 }

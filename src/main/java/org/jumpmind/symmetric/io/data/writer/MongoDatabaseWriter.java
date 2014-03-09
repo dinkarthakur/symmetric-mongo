@@ -26,24 +26,19 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
      * regular database if i turn off the use.reload property initial load
      * works.
      * 
-     * TODO add support for mappings between catalog/schema and mongo database
-     * names. Should it be in the properties file? Should this be entire
-     * database writer be driven by a separate properties file (or xml or json
-     * file).
+     * TODO It looks like mongodb handles strings, byte[] and date() objects how
+     * do we determine when to insert certain types because there is no schema
+     * in mongo db. One idea I had was to cache create xml for tables somewhere
+     * in mongodb and use it to determine types from the source.
+     * 
+     * TODO support mapping foreign keys into references
+     * 
+     * TODO could add support for bulk inserts. the insert api can take an array
+     * of dbobjects
      * 
      * TODO property for write concern
      * http://api.mongodb.org/java/current/com/mongodb
      * /WriteConcern.html#ACKNOWLEDGED
-     * 
-     * TODO bulk load test (flush lots of dbobjects together for performance
-     * reasons)
-     * 
-     * TODO support sql execute mongo commands
-     * 
-     * * TODO It looks like mongodb handles strings, byte[] and date() objects
-     * how do we determine when to insert certain types because there is no
-     * schema in mongo db. One idea I had was to cache create xml for tables
-     * somewhere in mongodb and use it to determine types from the source.
      */
 
     protected IMongoClientManager clientManager;
