@@ -1,4 +1,4 @@
-SymmetricDS mongoDB Database Writer
+SymmetricDS mongoDB Writer
 ===============
 
 This project is an implementation of a SymmetricDS [IDataWriter] (http://www.symmetricds.org/doc/3.5/javadoc/org/jumpmind/symmetric/io/data/IDataWriter.html) that maps and writes relational data to a [mongoDB] (http://www.mongodb.org/) NoSQL database.  This project can also be used as a reference for how to write extension point for other non sql based data stores.
