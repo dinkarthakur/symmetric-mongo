@@ -139,4 +139,10 @@ public class MongoDatabaseWriter extends AbstractDatabaseWriter {
         return true;
     }
 
+	@Override
+	protected void logFailureDetails(Throwable e, CsvData data, boolean logLastDmlDetails) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

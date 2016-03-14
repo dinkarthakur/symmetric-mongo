@@ -4,11 +4,13 @@ apply plugin: 'eclipse'
 repositories {
     mavenCentral()
     maven {
-       url "http://snapshots.repository.codehaus.org"
+       url "http://maven.jumpmind.com/repo"
     }
 }
-
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.1' //version required
+}
 dependencies {
-    compile 'org.jumpmind.symmetric:symmetric-core:3.6.0-SNAPSHOT'
+    compile 'org.jumpmind.symmetric:symmetric-core:3.7.19'
     compile 'org.mongodb:mongo-java-driver:2.11.4'
 }
